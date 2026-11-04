@@ -14,7 +14,7 @@ Note: The Project uses two single-layer neural network, which may lead to biased
 Control Group 1: Single-layer Perceptron, 784\
 Experimental Group 1: Single-layer LIF Neuron, Poisson Rate-Encoding, 784\
 Control Group 2: Single-layer Perceptron, 84\
-Experimental Group 2: Single-layer LIF Neuron, Poisson Rate-Encoding, 84\
+Experimental Group 2: Single-layer LIF Neuron, Poisson Rate-Encoding, 84
 
 PoMNIST: Poisson Rate-Encoded MNIST data used for Experimental Group 1\
 EmbedMNIST: CNN-converted MNIST data with preserved labels, used for Group class 2; encoded into Poisson spike rates within `ann_vs_lif_embedding_sized.ipynb` for Experimental Group 2
