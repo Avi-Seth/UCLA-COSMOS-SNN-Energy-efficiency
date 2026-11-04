@@ -8,15 +8,15 @@ For the overview of the project and the poster, please see `COSMOS_SNN_Project.p
 
 Note: The Project uses two single-layer neural network, which may lead to biased results.
 
-`ann_vs_lif_normal_sized.ipynb`: Contains Control and Experimental Groups 1
+`ann_vs_lif_normal_sized.ipynb`: Contains Control and Experimental Groups 1\
 `ann_vs_lif_embedding_sized.ipynb` Contains Control and Experimental Groups 2
 
-Control Group 1: Single-layer Perceptron, 784
-Experimental Group 1: Single-layer LIF Neuron, Poisson Rate-Encoding, 784
-Control Group 2: Single-layer Perceptron, 84
-Experimental Group 2: Single-layer LIF Neuron, Poisson Rate-Encoding, 84
+Control Group 1: Single-layer Perceptron, 784\
+Experimental Group 1: Single-layer LIF Neuron, Poisson Rate-Encoding, 784\
+Control Group 2: Single-layer Perceptron, 84\
+Experimental Group 2: Single-layer LIF Neuron, Poisson Rate-Encoding, 84\
 
-PoMNIST: Poisson Rate-Encoded MNIST data used for Experimental Group 1
+PoMNIST: Poisson Rate-Encoded MNIST data used for Experimental Group 1\
 EmbedMNIST: CNN-converted MNIST data with preserved labels, used for Group class 2; encoded into Poisson spike rates within `ann_vs_lif_embedding_sized.ipynb` for Experimental Group 2
 
 Originally planned to use SHD (Spiking Heidelberg Digits) dataset, SHD data does not allow for equal size comparison with normal 784-input layer.
