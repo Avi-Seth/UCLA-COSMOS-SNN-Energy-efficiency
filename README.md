@@ -4,6 +4,15 @@
 **Avi Seth**, The Science Academy STEM Magnet (Class of 2027)
 UCLA COSMOS 2026, Cluster 1: *Brain-Inspired Computing: Learning in Biological and Artificial Neural Networks*
 
+## Contributions and AI use
+
+This project was done during the UCLA COSMOS 2026 program (Cluster 1), where AI coding assistants were permitted.
+
+- **My work:** the research question, the experiment design (control ANN vs. a single LIF neuron, the decision-window sweep, the energy comparison), the switch from raw MNIST to embedded features after finding raw MNIST too easy, the parameter sweeps, the analysis and the conclusions.
+- **Mentor:** Prof. H. Tad Blair (UCLA Psychology) contributed core ideas to the experimental design, including the LeNet-5 embedding of MNIST.
+- **AI assistance:** Claude Opus (Anthropic) wrote most of the code in the notebooks to my specifications: data loading and spike encoding, the ANN and LIF models, training and evaluation, the energy calculations, the plots, and the interactive LIF demo. It also helped draft the explanations in the notebooks and this README, which I edited.
+- **Checking:** I ran every notebook, checked the results and figures against the raw outputs, and take responsibility for the code and the conclusions.
+
 ![Project poster](COSMOS_SNN_Project.png)
 
 ## Overview
@@ -98,7 +107,7 @@ The notebooks are written for Google Colab (a GPU is optional).
 
 ## Acknowledgements
 
-Thanks to **Prof. H. Tad Blair** (UCLA Department of Psychology) for core ideas behind the experimental design, including the LeNet-5 embedding of MNIST. Claude Opus (Anthropic) assisted with coding the spike-sampling methods and the LeNet-style CNN.
+Thanks to **Prof. H. Tad Blair** (UCLA Department of Psychology) for core ideas behind the experimental design, including the LeNet-5 embedding of MNIST.
 
 ## References
 
