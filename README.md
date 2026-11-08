@@ -76,7 +76,7 @@ ANN control accuracy: **99.12%**. Because the test set is class-balanced, accura
 | `EmbedMNIST.npz` | LeNet-5 features: `train_X` (60000 x 84), `train_y`, `test_X` (10000 x 84), `test_y` |
 | `LeakLIF.ipynb` | Interactive single LIF neuron demo (ipywidgets) |
 | `Project_Diagrams.zip` | Poster figures (raster plots, LIF activity, data distributions, result plots) and a live LIF demo notebook |
-| `hybrid_ann_snn_energy_v11.ipynb` | Separate, extended study: where to place the ANN/SNN boundary in a hybrid network, on spoken digits (SHD/HD) and MNIST/N-MNIST, under two energy models |
+
 
 Both experiment notebooks also include per-sample spike raster plots and LIF membrane/spike plots that are not shown on the poster. The LeNet-5 training code used to produce `EmbedMNIST.npz` is not included; the extracted features are.
 
@@ -88,7 +88,7 @@ The notebooks are written for Google Colab (a GPU is optional).
 - **Experiment 1** downloads MNIST automatically through torchvision.
 - **Experiment 2** reads `EmbedMNIST.npz` from this repo. Upload it to Colab or Google Drive and set `EMBEDMNIST_PATH` in cell 1B (set `MOUNT_DRIVE = False` if the file is on the local Colab disk).
 - **Settings** live in the `CFG` cell: `T`, `T_WINDOW_FRACTION`, `BETA`, `SEEDS`, `N_TRAIN`, `N_TEST`.
-- The hybrid notebook also installs `tonic` and downloads its own datasets on first run.
+
 
 ## Limitations
 
