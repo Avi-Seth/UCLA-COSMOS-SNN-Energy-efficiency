@@ -8,42 +8,41 @@ UCLA COSMOS 2026, Cluster 1: *Brain-Inspired Computing: Learning in Biological a
 
 This project was done during the UCLA COSMOS 2026 program (Cluster 1), where AI coding assistants were permitted.
 
-- **My work:** the research question, the experiment design (control ANN vs. a single LIF neuron, the decision-window sweep, the energy comparison), the switch from raw MNIST to embedded features after finding raw MNIST too easy, the parameter sweeps, the analysis and the conclusions.
+- **Work:** SNN Energy efficiency hypothesis, the experiment design (control ANN vs. a single LIF neuron, decision-window, and energy comparison), transition from raw MNIST to embedded features due to triviality, analysis and conclusion.
 - **Mentor:** Prof. H. Tad Blair (UCLA Psychology) contributed core ideas to the experimental design, including the LeNet-5 embedding of MNIST.
-- **AI assistance:** Claude Opus (Anthropic) wrote most of the code in the notebooks to my specifications: data loading and spike encoding, the ANN and LIF models, training and evaluation, the energy calculations, the plots, and the interactive LIF demo. It also helped draft the explanations in the notebooks and this README, which I edited.
-- **Checking:** I ran every notebook, checked the results and figures against the raw outputs, and take responsibility for the code and the conclusions.
+- **AI assistance:** Claude Opus (Anthropic) wrote most of the code to my specifications (including data loading and spike encoding, the ANN and LIF models, training and evaluation, the energy calculations, the plots, and the interactive LIF demo).
 
 ![Project poster](COSMOS_SNN_Project.png)
 
 ## Overview
 
-Spiking neural networks (SNNs) are widely described as more energy-efficient than conventional artificial neural networks (ANNs). This project tests that claim on a small, tightly controlled task. A single-layer ANN and a single leaky integrate-and-fire (LIF) neuron are trained on the same binary problem (*is this digit a 3?*), and their accuracy and modelled energy per inference are compared as the LIF neuron's decision window is shortened.
+Spiking neural networks (SNNs) are widely described as more energy-efficient than conventional artificial neural networks (ANNs). This project tests that claim on a small, tightly controlled task. A single-layer ANN and a single leaky integrate-and-fire (LIF) neuron are trained on the same binary problem (specifically for 3 in this case), and the accuracy and modeled energy per inference are compared as the LIF neuron's decision window is shortened.
 
-**Research question:** Can an LIF-based classifier use less energy than an equivalent ANN while staying within 0.5 percentage points (pp) of its accuracy, and where does any efficiency advantage come from?
+**Research question:** Can an LIF-based classifier use less energy than an equivalent ANN while staying within 0.5% of its accuracy, and what is the reason for the efficiency advantage?
 
 ## Method
 
-Both arms have the same input width and one output, use the same class-balanced train/test splits (10,000 / 2,000), and are trained with binary cross-entropy for the same number of epochs.
+Both groups have the same input width and one output, use the same class-balanced train/test splits (10,000 / 2,000), and are trained with binary cross-entropy for the same number of epochs.
 
-| Arm | Input | Model | Decision |
+| Group | Input | Model | Decision |
 |---|---|---|---|
 | Control (1C) | Static, real-valued features | `Linear(n, 1)` (logistic regression) | logit > 0 |
-| Experimental (1E) | The same features, rate-encoded as spike trains over `T` timesteps | `Linear(n, 1)` applied at each timestep, driving one LIF neuron (snnTorch `Leaky`, beta = 0.9) | output spikes > half the processed timesteps |
+| Experimental (1E) | Same features, rate-encoded as spike trains over `T` timesteps | `Linear(n, 1)` applied at each timestep, driving one LIF neuron (snnTorch `Leaky`, beta = 0.9) | output spikes > half the processed timesteps |
 
-**Rate encoding.** At every timestep each input spikes independently with probability proportional to its value (Bernoulli sampling, the discrete-time approximation of Poisson rate coding used by snnTorch's `spikegen.rate`). Spike trains are drawn once with a fixed seed and frozen as a dataset.
+**Rate encoding.** At every timestep each input spikes independently with probability proportional to its value (Bernoulli sampling/Poisson rate encoding used by snnTorch's `spikegen.rate`). Spike trains are drawn once with a fixed seed and frozen as a dataset.
 
-**Window sweep.** `T_WINDOW_FRACTION` sets how many of the `T` timesteps the LIF neuron processes before deciding. A shorter window means fewer input spikes and fewer operations, but less evidence. Each window is trained with several random seeds and reported as mean ± SD.
+**Window coverage.** `T_WINDOW_FRACTION` sets how many of the `T` timesteps the LIF neuron processes before deciding. Shorter window means fewer input spikes and fewer operations. Each window is trained with several random seeds and reported as mean ± SD.
 
 | Experiment | Notebook | Inputs (n) | Encoding |
 |---|---|---|---|
 | 1: Raw MNIST | `ann_vs_lif_normalsized.ipynb` | 784 pixels | spike probability = pixel brightness (0 to 1), `T = 10` |
 | 2: EmbedMNIST | `ann_vs_lif_embedding_sized.ipynb` | 84 features | spike probability = activation / 28, `T = 30` |
 
-**Why EmbedMNIST.** MNIST pixel values cluster almost entirely at 0 and 255, so a binary spike code loses very little and the comparison is trivially favourable to the SNN. EmbedMNIST replaces each image with the 84 post-ReLU activations of the penultimate layer of a LeNet-5 CNN trained on MNIST (98.87% test accuracy). These values are far less clustered (about half are exactly zero, the rest spread up to about 28), so Experiment 2 is the meaningful test. The Spiking Heidelberg Digits (SHD) dataset was considered but does not allow a width-matched comparison with the 784-input baseline.
+**Why EmbedMNIST.** MNIST pixel values are bimodal on the logarithmic scale(clustering almost entirely at 0 and 255), so the comparison is trivially favourable to the SNN. EmbedMNIST replaces each image with the 84 post-ReLU activations of the penultimate layer of a LeNet-5 CNN trained on MNIST (98.87% test accuracy). These values are far less clustered (about half are exactly zero, the rest spread up to about 28), so Experiment 2 is the more meaningful test. The Spiking Heidelberg Digits (SHD) dataset was initially considered but does not allow a width-matched comparison with the 784-input baseline.
 
 ## Energy model
 
-Operation counts are measured from the forward pass. Energy is **modelled**, in normalized units, so only ratios are meaningful. The accounting follows the hardware-aware approach of Dampfhoffer et al. [1]: on digital accelerators, memory access rather than arithmetic dominates energy (see also Horowitz [2]). Per inference:
+Operation counts are measured from the forward pass. Energy is **modelled**, in normalized units, and ratios are applied. The model is derived from the approach of Dampfhoffer et al. [1]: on digital accelerators, memory access rather than arithmetic dominates energy (see also Horowitz [2]). Per inference:
 
 ```
 E_ANN = 22.6  x N_MAC
@@ -54,11 +53,11 @@ E_SNN = 16.33 x N_AC  +  11.8 x N_neurons x T_eff
 - **AC** (accumulate): one per input spike per synapse. Because a spike is 0 or 1, `activation x weight` becomes `+ weight`, and no activation value has to be fetched from memory.
 - **Leak**: one LIF membrane update per neuron per processed timestep, paid whether or not a spike occurs.
 
-The constants are the memory-inclusive per-operation costs used in the notebooks, derived from [1]. The SNN's advantage therefore depends on **sparsity**: it wins only when few enough input spikes arrive to offset the per-timestep leak cost.
+The constants are the memory-inclusive per-operation costs used in the notebooks, derived from [1]. The SNN's advantage therefore depends on **sparsity**. It has realized advantages only when few input spikes arrive to offset the per-timestep leak cost.
 
 ## Results (Experiment 2, EmbedMNIST)
 
-ANN control accuracy: **99.12%**. Because the test set is class-balanced, accuracy equals balanced accuracy.
+ANN control accuracy: **99.12%**.
 
 | LIF window | LIF accuracy | Gap to ANN | Modelled energy vs ANN |
 |---|---|---|---|
@@ -68,12 +67,12 @@ ANN control accuracy: **99.12%**. Because the test set is class-balanced, accura
 | 6/30 | 97.66 ± 0.12% | 1.46 pp | 0.44x |
 | 1/30 | 91.07 ± 0.23% | 8.05 pp | 0.07x |
 
-*Values from the window sweep recorded in section 9 of `ann_vs_lif_embedding_sized.ipynb`.*
+*Values from the window curve recorded in section 9 of `ann_vs_lif_embedding_sized.ipynb`.*
 
 - Modelled energy falls linearly as the window shrinks. The LIF arm becomes cheaper than the ANN only at or below about 13/30 (about 43%) of its window.
-- From 13/30 down to 7/30, accuracy stays roughly flat (98.3% to 98.6%), trailing the ANN by about 0.5 to 0.9 pp while using up to about half the modelled energy. Below 7/30, accuracy falls off sharply.
-- The closest the LIF arm came to the 0.5 pp target while also being cheaper was 0.53 pp (at 13/30), within run-to-run noise of the target.
-- **Takeaway:** the efficiency gain is real but conditional. It comes from spike sparsity, and it trades against accuracy, consistent with [1].
+- From 13/30 down to 7/30, accuracy stays roughly flat (98.3% to 98.6%), trailing the ANN by about 0.5 to 0.9 while using up to about half the modelled energy. Below 7/30, accuracy falls off sharply. Curve imitates expected logarithmic curve.
+- The closest the 2E group came to the 0.5% target of 2C while also being cheaper was 0.53% (at 13/30), within the error bar.
+- **Conclusion:** Efficiency gain is tight. A large part is derived from spike sparsity with tradeoff against accuracy (consistent with [1]). The difference in results between Class 1 and Class 2 groups should serve as a criticism against the usage of industry standards like MNIST when comparing efficiencies of neural networks.
 
 ## Repository contents
 
