@@ -6,11 +6,34 @@ UCLA COSMOS 2026, Cluster 1: *Brain-Inspired Computing: Learning in Biological a
 
 ## Contributions and AI use
 
-This project was done during the UCLA COSMOS 2026 program (Cluster 1), where AI coding assistants were permitted.
 
-- **Work:** SNN Energy efficiency hypothesis, the experiment design (control ANN vs. a single LIF neuron, decision-window, and energy comparison), transition from raw MNIST to embedded features due to triviality, analysis and conclusion.
-- **Mentor:** Prof. H. Tad Blair (UCLA Psychology) contributed core ideas to the experimental design, including the LeNet-5 embedding of MNIST.
-- **AI assistance:** Claude Opus (Anthropic) wrote most of the code to my specifications (including data loading and spike encoding, the ANN and LIF models, training and evaluation, the energy calculations, the plots, and the interactive LIF demo).
+This was my first mentored research project, carried out during UCLA COSMOS 2026 (Cluster 1),
+where AI coding assistants were permitted.
+
+**My work**
+- **Research question and hypothesis:** can a single LIF neuron stay close to an
+  equivalent ANN's accuracy while using less energy, and where does any saving come from?
+- **Experiment design:** a control ANN vs. a single LIF neuron, matched in input width,
+  parameters (85 each), data splits and training; a sweep over the LIF decision window;
+  multiple random seeds per window.
+- **Energy comparison:** applied the memory-inclusive operation-cost model of
+  Dampfhoffer et al. [1] to operation counts measured from each model.
+- **Dataset problem:** found that raw MNIST pixels are mostly blank or near full
+  brightness, which makes the comparison trivially favourable to the SNN
+  [after first trying N-MNIST]. Adopted the LeNet-5 embedding
+  (EmbedMNIST) suggested by Prof. Blair.
+- **Experiments, analysis and poster:** ran the window sweeps, analysed the
+  accuracy-energy tradeoff, drew the conclusions, made the poster and presented at the COSMOS culmininating event.
+  - **Learned NN training using PyTorch & snnTorch libraries.
+
+**Mentor: Prof. H. Tad Blair (UCLA Department of Psychology)**
+- Guided the research question, experimental design and interpretation throughout.
+- Suggested replacing raw MNIST with LeNet-5 penultimate-layer embeddings, which
+  became Experiment 2.
+
+**AI assistance: Claude Opus (Anthropic)**
+- Wrote most of the code, plots and calculated energy cost based on my specifications/inputs.
+
 
 ![Project poster](COSMOS_SNN_Project.png)
 
